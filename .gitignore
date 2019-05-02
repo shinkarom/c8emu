@@ -1,0 +1,5 @@
+build/*
+!build/CMakeLists.txt
+bin/*.exe
+/bin/BLINKY
+/bin/SDL2.dll
