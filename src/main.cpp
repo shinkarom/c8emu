@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 	load_file("BLINKY");
 	create_window();
 	while(loop_continues){
+		exec_frame_cycle();
 		poll_events();
 		render_frame();
 	}	
