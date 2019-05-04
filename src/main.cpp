@@ -1,14 +1,15 @@
 #include <iostream>
+using namespace std;
 
 #include "draw.hpp"
+#include "c8.hpp"
 
 extern bool loop_continues;
 
-char code[0x1000];
-
 int main(int argc, char *argv[])
 {
-	std::cout<<"c8emu";
+	std::cout<<"c8emu"<<endl;
+	load_file("BLINKY");
 	create_window();
 	while(loop_continues){
 		poll_events();
