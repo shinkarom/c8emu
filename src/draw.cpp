@@ -2,11 +2,17 @@
 #include <SDL2/SDL.h>
 #include <cstdint>
 #include <ctime>
+#include <cstdio>
+#include <chrono>
+#include <thread>
 using namespace std;
+using namespace std::chrono;
 
 #include "draw.hpp"
 
 const uint8_t multiplier = 10;
+const uint16_t TICKS_PER_FRAME = 100 / 60;
+auto start = steady_clock::now();
 
 SDL_Window *win;
 SDL_Renderer *ren;
@@ -37,6 +43,12 @@ void poll_events()
 
 void render_frame()
 {
+	auto now = steady_clock::now();
+	auto diff = now-start;
+	auto end = now+milliseconds(16);
+	if(diff>=seconds(1))
+		start=now;
+	
 	SDL_Rect rect;
 	rect.w = multiplier;
 	rect.h = multiplier;	
@@ -52,13 +64,9 @@ void render_frame()
 			}
 		}
 	}
-	SDL_RenderPresent(ren);
 	
-	int frameTicks = SDL_GetTicks()-last_ticks; 
-	last_ticks = SDL_GetTicks();
-	if(frameTicks < 17) {
-		SDL_Delay(17 - frameTicks); 
-	}
+	SDL_RenderPresent(ren);	
+	this_thread::sleep_until(end);
 }
 
 void exit_emu()
@@ -70,7 +78,7 @@ void exit_emu()
 
 void draw_byte(uint8_t x,uint8_t y,uint8_t byte)
 {
-	for(uint8_t z = 0;z<8;z++){
+	for(uint8_t z = 0;z<16;z++){
 		display[(x+7-z)%64][y]^= (byte & 1);
 		byte>>=1;
 	}	
@@ -88,4 +96,11 @@ void clear_display()
 uint8_t get_random(uint8_t num)
 {
 	return (rand()%256)&num;
+}
+
+bool is_key_pressed(uint8_t keynum)
+{
+	const uint8_t *state = SDL_GetKeyboardState(NULL);
+	const SDL_Scancode keys[16] = {SDL_SCANCODE_X,SDL_SCANCODE_1,SDL_SCANCODE_2,SDL_SCANCODE_3,SDL_SCANCODE_Q,SDL_SCANCODE_W,SDL_SCANCODE_E,SDL_SCANCODE_A,SDL_SCANCODE_S,SDL_SCANCODE_D,SDL_SCANCODE_Z,SDL_SCANCODE_C,SDL_SCANCODE_4,SDL_SCANCODE_R,SDL_SCANCODE_F,SDL_SCANCODE_W};
+	return state[keys[keynum]];
 }

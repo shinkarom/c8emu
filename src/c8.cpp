@@ -69,7 +69,7 @@ void exec_instruction(uint16_t instr)
 		uint8_t byte = instr&0xFF;
 		uint8_t x = (instr>>8)&0xF;
 		registers[x] = byte;
-		printf("LD V%d, %d\n",x,byte);
+		//printf("LD V%d, %d\n",x,byte);
 	} else
 	if((instr&0xF000)==0x7000){
 		uint8_t byte = instr&0xFF;
@@ -81,7 +81,7 @@ void exec_instruction(uint16_t instr)
 		uint8_t y = (instr>>4)&0xF;
 		uint8_t x = (instr>>8)&0xF;
 		registers[x] = registers[y];
-		printf("LD V%d, V%d\n",x,y);
+		//printf("LD V%d, V%d\n",x,y);
 	} else	
 	if((instr&0xF00F)==0x8001){
 		uint8_t y = (instr>>4)&0xF;
@@ -158,11 +158,23 @@ void exec_instruction(uint16_t instr)
 		if(n==0)n=16;
 		uint8_t y = (instr>>4)&0xF;
 		uint8_t x = (instr>>8)&0xF;
-		for(uint8_t z = 0;z<=n;z++){
+		for(uint8_t z = 0;z<n;z++){
 			draw_byte(registers[x],(registers[y]+z)%32,code[I+z]);
 		}
-		printf("DRW V%d (%d),V%d (%d),%d\n",x,registers[x],y,registers[y],n);
+		//printf("DRW V%d (%d),V%d (%d),%d\n",x,registers[x],y,registers[y],n);
 	} else
+	if((instr&0xF0FF)==0xE09E){
+		uint8_t x = (instr>>8)&0xF;
+		if(is_key_pressed(registers[x]))
+			PC+=2;
+		//printf("SKP V%d\n",x);
+	} else
+	if((instr&0xF0FF)==0xE0A1){
+		uint8_t x = (instr>>8)&0xF;
+		if(!is_key_pressed(registers[x]))
+			PC+=2;
+		//printf("SKNP V%d\n",x);
+	} else		
 	if((instr&0xF0FF)==0xF007){
 		uint8_t x = (instr>>8)&0xF;
 		registers[x]=DT;
@@ -185,8 +197,8 @@ void exec_instruction(uint16_t instr)
 	} else
 	if((instr&0xF0FF)==0xF029){
 		uint8_t x = (instr>>8)&0xF;
-		I=(x*5);
-	//	printf("LD F, V%d\n",x);
+		I=(registers[x]*5);
+		//printf("LD F, V%d\n",x);
 	} else		
 	if((instr&0xF0FF)==0xF033){
 		uint8_t x = (instr>>8)&0xF;
@@ -202,14 +214,12 @@ void exec_instruction(uint16_t instr)
 		uint8_t x = (instr>>8)&0xF;
 		for(uint8_t z=0;z<=x;z++)
 			code[I+z] = registers[z];
-		I+=x;
 	//	printf("LD [I], V%d\n",x);
 	} else		
 	if((instr&0xF0FF)==0xF065){
 		uint8_t x = (instr>>8)&0xF;
 		for(uint8_t z=0;z<=x;z++)
 			registers[z] = code[I+z];
-		I+=x;
 	//	printf("LD V%d, [I]\n",x);
 	} else
 		
