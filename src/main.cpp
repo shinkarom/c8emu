@@ -9,7 +9,7 @@ extern bool loop_continues;
 int main(int argc, char *argv[])
 {
 	std::cout<<"c8emu"<<endl;
-	load_file("BLINKY");
+	load_file("PONG");
 	create_window();
 	while(loop_continues){
 		exec_frame_cycle();
