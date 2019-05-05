@@ -3,16 +3,12 @@
 #include <cstdint>
 #include <ctime>
 #include <cstdio>
-#include <chrono>
-#include <thread>
 using namespace std;
-using namespace std::chrono;
 
 #include "draw.hpp"
 
 const uint8_t multiplier = 10;
 const uint16_t TICKS_PER_FRAME = 100 / 60;
-auto start = steady_clock::now();
 
 SDL_Window *win;
 SDL_Renderer *ren;
@@ -42,13 +38,7 @@ void poll_events()
 }
 
 void render_frame()
-{
-	auto now = steady_clock::now();
-	auto diff = now-start;
-	auto end = now+milliseconds(16);
-	if(diff>=seconds(1))
-		start=now;
-	
+{	
 	SDL_Rect rect;
 	rect.w = multiplier;
 	rect.h = multiplier;	
@@ -66,7 +56,6 @@ void render_frame()
 	}
 	
 	SDL_RenderPresent(ren);	
-	this_thread::sleep_until(end);
 }
 
 void exit_emu()
