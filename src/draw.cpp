@@ -71,7 +71,7 @@ void exit_emu()
 void draw_byte(uint8_t x,uint8_t y,uint8_t byte)
 {
 	for(uint8_t z = 0;z<8;z++){
-		display[(x+z)%64][y]^= (byte & 1);
+		display[(x+7-z)%64][y]^= (byte & 1);
 		byte>>=1;
 	}	
 }
