@@ -204,11 +204,10 @@ void exec_instruction(uint16_t instr)
 		uint8_t x = (instr>>8)&0xF;
 		uint8_t n = registers[x];
 		code[I] = n/100;
-		n/=100;
+		n%=100;
 		code[I+1] = n/10;
-		n/=10;
-		code[I+2] = n;
-	//	printf("LD B, V%d\n",x);
+		code[I+2] = n % 10;
+	//	printf("LD B, V%d (%d)\n",x,n);
 	} else		
 	if((instr&0xF0FF)==0xF055){
 		uint8_t x = (instr>>8)&0xF;
