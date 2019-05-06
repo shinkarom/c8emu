@@ -12,7 +12,11 @@ extern bool loop_continues;
 int main(int argc, char *argv[])
 {
 	std::cout<<"c8emu"<<endl;
-	load_file("PONG");
+	if(argc!=2){
+		cout<<"File name required"<<endl;
+		return 1;
+	}
+	load_file(argv[1]);
 	create_window();
 	auto start = steady_clock::now();
 	while(loop_continues){

@@ -67,7 +67,7 @@ void exit_emu()
 
 void draw_byte(uint8_t x,uint8_t y,uint8_t byte)
 {
-	for(uint8_t z = 0;z<16;z++){
+	for(uint8_t z = 0;z<8;z++){
 		display[(x+7-z)%64][y]^= (byte & 1);
 		byte>>=1;
 	}	
@@ -75,16 +75,12 @@ void draw_byte(uint8_t x,uint8_t y,uint8_t byte)
 
 void clear_display()
 {
-	for(uint8_t x = 0;x<8;x++){
-		for(uint8_t y = 0;y<8;y++){
-			display[x][y] = 0;
-	}
-	}
+	memset(display,0,64*32);
 }
 
 uint8_t get_random(uint8_t num)
 {
-	return (rand()%256)&num;
+	return rand()%(num+1);
 }
 
 bool is_key_pressed(uint8_t keynum)
