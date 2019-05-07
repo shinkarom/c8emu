@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	while(loop_continues){
 		auto now = steady_clock::now();
 		auto diff = now-start;
-		auto end = now+milliseconds(16);
+		auto end = now+milliseconds(20);
 		if(diff>=seconds(1))
 			start=now;
 		

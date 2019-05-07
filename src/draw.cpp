@@ -8,7 +8,6 @@ using namespace std;
 #include "draw.hpp"
 
 const uint8_t multiplier = 10;
-const uint16_t TICKS_PER_FRAME = 100 / 60;
 
 SDL_Window *win;
 SDL_Renderer *ren;
@@ -86,6 +85,6 @@ uint8_t get_random(uint8_t num)
 bool is_key_pressed(uint8_t keynum)
 {
 	const uint8_t *state = SDL_GetKeyboardState(NULL);
-	const SDL_Scancode keys[16] = {SDL_SCANCODE_X,SDL_SCANCODE_1,SDL_SCANCODE_2,SDL_SCANCODE_3,SDL_SCANCODE_Q,SDL_SCANCODE_W,SDL_SCANCODE_E,SDL_SCANCODE_A,SDL_SCANCODE_S,SDL_SCANCODE_D,SDL_SCANCODE_Z,SDL_SCANCODE_C,SDL_SCANCODE_4,SDL_SCANCODE_R,SDL_SCANCODE_F,SDL_SCANCODE_W};
+	const SDL_Scancode keys[16] = {SDL_SCANCODE_X,SDL_SCANCODE_1,SDL_SCANCODE_2,SDL_SCANCODE_3,SDL_SCANCODE_Q,SDL_SCANCODE_W,SDL_SCANCODE_E,SDL_SCANCODE_A,SDL_SCANCODE_S,SDL_SCANCODE_D,SDL_SCANCODE_Z,SDL_SCANCODE_C,SDL_SCANCODE_4,SDL_SCANCODE_R,SDL_SCANCODE_F,SDL_SCANCODE_V};
 	return state[keys[keynum]];
 }
