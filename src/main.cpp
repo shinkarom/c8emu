@@ -8,6 +8,7 @@ using namespace std::chrono;
 #include "c8.hpp"
 
 extern bool loop_continues;
+extern bool drawflag;
 
 int main(int argc, char *argv[])
 {
@@ -28,7 +29,7 @@ int main(int argc, char *argv[])
 		
 		exec_frame_cycle();
 		poll_events();
-		render_frame();
+		if(drawflag) render_frame();
 		
 		this_thread::sleep_until(end);
 	}	

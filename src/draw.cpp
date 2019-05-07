@@ -64,12 +64,17 @@ void exit_emu()
 	SDL_Quit();	
 }
 
-void draw_byte(uint8_t x,uint8_t y,uint8_t byte)
+bool draw_byte(uint8_t x,uint8_t y,uint8_t byte)
 {
+	bool result = false;
 	for(uint8_t z = 0;z<8;z++){
-		display[(x+7-z)%64][y]^= (byte & 1);
+		auto p = display[(x+7-z)%64][y%32];
+		display[(x+7-z)%64][y%32]^= (byte & 1);
+		if((p==1)&(display[(x+7-z)%64][y%32]==0))
+			result=true;
 		byte>>=1;
 	}	
+	return result;
 }
 
 void clear_display()

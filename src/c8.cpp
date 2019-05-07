@@ -16,6 +16,8 @@ uint8_t ROM[16*5] = {0xF0,0x90,0x90,0x90,0xF0,  0x20,0x60,0x20,0x20,0x70,  0xF0,
 uint8_t registers[16],SP,DT,ST;
 uint16_t stack[16],PC,I;
 
+bool drawflag;
+
 void init_vm()
 {
 	SP = 1;
@@ -29,9 +31,11 @@ void init_vm()
 	}
 }
 
-void exec_instruction(uint16_t instr)
+void exec_instruction()
 {	
 	if(PC>=0x1000) throw new runtime_error("Out of Bounds");
+	uint16_t instr = (code[PC]<<8)|(code[PC+1]);	
+	PC+=2;	
 	uint8_t x = (instr>>8)&0xF;
 	uint8_t y = (instr>>4)&0xF;
 	uint8_t byte = instr&0xFF;
@@ -79,7 +83,7 @@ void exec_instruction(uint16_t instr)
 	} else	
 	if((instr&0xF00F)==0x8000){
 		registers[x] = registers[y];
-		printf("LD V%d, V%d\n",x,y);
+	//	printf("LD V%d, V%d\n",x,y);
 	} else	
 	if((instr&0xF00F)==0x8001){
 		registers[x] |= registers[y];
@@ -137,10 +141,12 @@ void exec_instruction(uint16_t instr)
 	} else 
 	if((instr&0xF000)==0xD000){
 		uint8_t n = instr&0xF;
-		if(n==0)n=16;
+		registers[15] = 0;
 		for(uint8_t z = 0;z<n;z++){
-			draw_byte(registers[x],(registers[y]+z)%32,code[I+z]);
+			if(draw_byte(registers[x],(registers[y]+z)%32,code[I+z]))
+				registers[15] = 1;
 		}
+		drawflag = true;
 	//	printf("DRW V%d (%d),V%d (%d),%d\n",x,registers[x],y,registers[y],n);
 	} else
 	if((instr&0xF0FF)==0xE09E){
@@ -181,7 +187,7 @@ void exec_instruction(uint16_t instr)
 	//	printf("ADD I, V%d\n",x);
 	} else
 	if((instr&0xF0FF)==0xF029){
-		I=(registers[x]*5);
+		I=(0x50+registers[x]*5);
 	//	printf("LD F, V%d\n",x);
 	} else		
 	if((instr&0xF0FF)==0xF033){
@@ -208,19 +214,17 @@ void exec_instruction(uint16_t instr)
 
 void exec_frame_cycle()
 {
+	drawflag = false;
 	if(DT>0) DT--;
 	if(ST>0) ST--;
-	for(uint8_t n = 0;n<10;n++){
-		uint8_t hi = code[PC],lo=code[PC+1];
-		uint16_t hl = (hi<<8)|lo;	
-		PC+=2;			
-		exec_instruction(hl);
+	for(uint8_t n = 0;n<10;n++){		
+		exec_instruction();
 	}
 }
 
 void load_file(string filename)
 {	
-	memcpy(&code[0],&ROM[0],16*5);
+	memcpy(&code[0x50],&ROM[0],16*5);
 	ifstream ifs(filename,ifstream::in|ifstream::binary); 
 	ifs.seekg(0, ios::end);
 	streampos length(ifs.tellg());
