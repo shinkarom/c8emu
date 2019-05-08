@@ -108,9 +108,9 @@ void exec_instruction()
 	//	printf("SUB V%d, V%d\n",x,y);
 	} else		
 	if((instr&0xF00F)==0x8006){
-		registers[15] = (registers[x]&1);
-		registers[x]=registers[x]>>1;
-	//	printf("SHR V%d\n",x);
+		registers[15] = (registers[y]&1);
+		registers[x]=registers[y]/2;
+	//	printf("SHR V%d, V%X\n",x,y);
 	} else			
 	if((instr&0xF00F)==0x8007){
 		registers[15] = (registers[y] > registers[x])?1:0;
@@ -118,9 +118,9 @@ void exec_instruction()
 	//	printf("SUBN V%d, V%d\n",x,y);
 	} else		
 	if((instr&0xF00F)==0x800E){
-		registers[15] = (registers[x]&0x10000000)>>7;;
-		registers[x]=registers[x]<<1;
-	//	printf("SHL V%d\n",x);
+		registers[15] = registers[y]>127?1:0;
+		registers[x]=registers[y]*2;
+	//	printf("SHL V%d, V%X\n",x,y);
 	} else		
 	if((instr&0xF00F)==0x9000){	
 		if(registers[x]!=registers[y])
@@ -129,7 +129,7 @@ void exec_instruction()
 	} else		
 	if((instr&0xF000)==0xA000){
 		I = instr&0x0FFF;
-	//	printf("LD I, %d\n",I);
+	//	printf("%X: LD I, %X\n",PC,I);
 	} else
 	if((instr&0xF000)==0xB000){
 		PC = (instr&0x0FFF)+registers[0];
@@ -143,11 +143,12 @@ void exec_instruction()
 		uint8_t n = instr&0xF;
 		registers[15] = 0;
 		for(uint8_t z = 0;z<n;z++){
+			//printf("Drawing byte %X at %X,%X\n",code[I+z],registers[x],(registers[y]+z)%32);
 			if(draw_byte(registers[x],(registers[y]+z)%32,code[I+z]))
-				registers[15] = 1;
+				drawflag|=registers[15] = 1;			
 		}
 		drawflag = true;
-	//	printf("DRW V%d (%d),V%d (%d),%d\n",x,registers[x],y,registers[y],n);
+	//	printf("%X: DRW V%X (%X),V%X (%X),%X\n",PC,x,registers[x],y,registers[y],n);
 	} else
 	if((instr&0xF0FF)==0xE09E){
 		if(is_key_pressed(registers[x]))
@@ -184,7 +185,7 @@ void exec_instruction()
 	} else			
 	if((instr&0xF0FF)==0xF01E){
 		I+=registers[x];
-	//	printf("ADD I, V%d\n",x);
+	//	printf("ADD I, V%X (%X)\n",x,registers[x]);
 	} else
 	if((instr&0xF0FF)==0xF029){
 		I=(0x50+registers[x]*5);
@@ -200,16 +201,15 @@ void exec_instruction()
 	} else		
 	if((instr&0xF0FF)==0xF055){
 		for(uint8_t z=0;z<=x;z++)
-			code[I+z] = registers[z];
-	//	printf("LD [I], V%d\n",x);
+			code[I+z] = registers[z];			
+		//printf("LD [I], V%d\n",x);
 	} else		
 	if((instr&0xF0FF)==0xF065){
 		for(uint8_t z=0;z<=x;z++)
-			registers[z] = code[I+z];
-	//	printf("LD V%d, [I]\n",x);
-	} else
-		
-	printf("%d %d %d\n",PC,instr>>8,instr&0xFF);
+			registers[z] = code[I+z];		
+		//printf("LD V%d, [I]\n",x);
+	} else		
+		printf("%X: %X%X\n",PC,instr>>8,instr&0xFF);
 }
 
 void exec_frame_cycle()

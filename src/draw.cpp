@@ -25,6 +25,7 @@ void create_window()
 	loop_continues = true;
 	last_ticks = SDL_GetTicks();
 	srand(time(NULL));
+	render_frame();
 }
 
 void poll_events()
@@ -68,9 +69,9 @@ bool draw_byte(uint8_t x,uint8_t y,uint8_t byte)
 {
 	bool result = false;
 	for(uint8_t z = 0;z<8;z++){
-		auto p = display[(x+7-z)%64][y%32];
-		display[(x+7-z)%64][y%32]^= (byte & 1);
-		if((p==1)&(display[(x+7-z)%64][y%32]==0))
+		auto p = display[(x+7-z)%64][y];
+		display[(x+7-z)%64][y]^= (byte & 1);
+		if((p==1)&(display[(x+7-z)%64][y]==0))
 			result=true;
 		byte>>=1;
 	}	
